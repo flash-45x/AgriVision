@@ -1,0 +1,6 @@
+{
+  "name": "AgriVision",
+  "description": "AI-Powered Personal Farming Assistant for farmers, gardeners, rural agricultural labour, and FPO/Cooperative administrators with voice-first & camera-first low-literacy design, IoT smart irrigation, crop disease diagnosis, and cluster risk intelligence.",
+  "requestFramePermissions": ["camera", "microphone", "geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
