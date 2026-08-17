@@ -102,18 +102,31 @@ async function callDirectGeminiRest(prompt: string, options?: {
     };
   }
 
-  // Primary model with fallback
-  const models = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash", "gemini-2.5-flash-lite"];
+  // Officially supported current Gemini models
+  const models = [
+    "gemini-3.7-flash",
+    "gemini-3.1-flash-lite",
+    "gemini-flash-latest",
+    "gemini-2.5-flash",
+  ];
   let lastError: any = null;
 
   for (const model of models) {
     try {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+        "x-goog-api-key": apiKey,
+      };
+
+      // If it is an AI Studio auth token (starts with AQ. or bearer format), attach Authorization header
+      if (apiKey.startsWith("AQ.") || apiKey.startsWith("ya29.")) {
+        headers["Authorization"] = `Bearer ${apiKey}`;
+      }
+
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
       const response = await fetch(url, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers,
         body: JSON.stringify(payload),
       });
 
