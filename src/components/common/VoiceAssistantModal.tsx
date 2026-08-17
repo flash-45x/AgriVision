@@ -14,7 +14,7 @@ import { TRANSLATIONS } from "../../data/translations";
 import { sendChatMessage, diagnoseCropImage } from "../../services/api";
 import { speakText, stopSpeaking, soundEffects, createSpeechRecognizer } from "../../utils/audio";
 import { AgriVisionLogo } from "./AgriVisionLogo";
-import { getSuggestedPrompts, SuggestedPromptItem } from "../../data/suggestedPrompts";
+import { getSuggestedPrompts, SuggestedPromptItem, getHardcodedSuggestedAnswer } from "../../data/suggestedPrompts";
 import { INITIAL_JOB_LISTINGS, INITIAL_PLANTS, INITIAL_USER_PROFILE, INITIAL_IOT_DATA, INITIAL_RISK_FACTORS, INITIAL_PRIORITY_ACTIONS, INITIAL_MARKET_PRICES } from "../../data/mockData";
 import { INITIAL_FPO_PROFILE, INITIAL_FPO_MEMBERS } from "../../data/fpoData";
 
@@ -331,7 +331,13 @@ export const VoiceAssistantModal: React.FC<VoiceAssistantModalProps> = ({
       let replyText = "";
       let spokenText = "";
 
-      if (imgToSend) {
+      // Check if this query matches one of our exact hardcoded suggested questions
+      const hardcoded = !imgToSend ? getHardcodedSuggestedAnswer(queryText, currentLanguage) : { found: false as const };
+
+      if (hardcoded.found) {
+        replyText = hardcoded.reply;
+        spokenText = hardcoded.spokenText;
+      } else if (imgToSend) {
         // Run diagnosis on photo
         const diagnosis = await diagnoseCropImage({
           imageBase64: imgToSend,
